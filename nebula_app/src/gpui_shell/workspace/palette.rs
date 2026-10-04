@@ -70,6 +70,9 @@ impl NebulaWorkspace {
                 self.dismiss_palette_state();
                 self.add_terminal_at(Some(path), None, window, cx);
             },
+            WorkspacePaletteAction::ChangeDirectory { pane, path } => {
+                self.run_directory_jump(pane, path, window, cx);
+            },
             WorkspacePaletteAction::RunAiSession { command, cwd } => {
                 self.dismiss_palette_state();
                 self.add_terminal_at(cwd, Some(command), window, cx);

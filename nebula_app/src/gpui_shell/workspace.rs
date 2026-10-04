@@ -55,6 +55,7 @@ use keyboard_bindings::{
     STATIC_DEFAULT_COMBOS, custom_workspace_binding, default_workspace_bindings, gpui_binding_combo,
 };
 mod details_panel;
+mod directory_jump;
 mod documents;
 mod export;
 mod file_tree;
@@ -434,6 +435,11 @@ enum WorkspacePaletteAction {
     },
     /// 在 frecency 目录中新建终端；已有目录中的 pane 由上面的 FocusPane 命中。
     OpenDirectory(std::path::PathBuf),
+    /// 提示符目录选择器：回到发起的 pane 里 `cd`。
+    ChangeDirectory {
+        pane: gpui::EntityId,
+        path: std::path::PathBuf,
+    },
     RunAiSession {
         command: String,
         cwd: Option<std::path::PathBuf>,
