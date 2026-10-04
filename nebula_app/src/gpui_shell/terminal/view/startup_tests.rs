@@ -646,12 +646,16 @@ fn ai_tab_hover_shows_full_directory_and_reported_task_but_not_stale_task(cx: &m
     view.update(window, |view, cx| {
         view.process_event(Event::CwdReport("/home/test/很长的项目目录".into()), cx);
         view.running_program = Some("codex".into());
-        view.process_event(Event::Title("修复 SSH 标签名称".into()), cx);
-        assert_eq!(view.tab_label(), "很长的项目目录");
+        view.process_event(Event::Title("✳ 修复 SSH 标签名称".into()), cx);
+        assert_eq!(view.tab_label(), "修复 SSH 标签名称");
         let hover = view.tab_tooltip(&view.tab_label());
         assert!(hover.contains("/home/test/很长的项目目录"));
-        assert!(hover.contains("修复 SSH 标签名称"));
+        assert_eq!(hover.matches("修复 SSH 标签名称").count(), 1);
+        view.process_event(Event::Title("✳ Codex".into()), cx);
+        assert_eq!(view.tab_label(), "很长的项目目录");
+        view.process_event(Event::Title("✳ 修复 SSH 标签名称".into()), cx);
         view.process_event(Event::CommandDone { exit_code: Some(0) }, cx);
+        assert_eq!(view.tab_label(), "很长的项目目录");
         assert!(!view.tab_tooltip(&view.tab_label()).contains("修复 SSH 标签名称"));
     });
 }
