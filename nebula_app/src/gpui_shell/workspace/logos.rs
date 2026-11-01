@@ -78,8 +78,23 @@ fn decode_sidebar_logo(
     dark: bool,
     target_size: u32,
 ) -> Option<Arc<RenderImage>> {
-    let (prepared, width, height) =
-        logo.render(if dark { [236, 239, 245] } else { [35, 40, 50] }, target_size)?;
+    let ink = if dark { [236, 239, 245] } else { [35, 40, 50] };
+    let (prepared, width, height) = if logo == crate::display::AiLogo::Claude {
+        // ljs：Claude 沿用 2.2 的粗射线 PNG 原图，按 2.2 的方式先 tint 再预缩放。
+        let mut rgba =
+            image::load_from_memory(include_bytes!("../../../../extra/logo/ai_claude.png"))
+                .ok()?
+                .into_rgba8();
+        logo.tint_pixels(&mut rgba, ink);
+        crate::display::prepare_ai_logo_texture(
+            rgba.as_raw(),
+            rgba.width(),
+            rgba.height(),
+            target_size,
+        )
+    } else {
+        logo.render(ink, target_size)?
+    };
     let mut rgba = image::RgbaImage::from_raw(width, height, prepared)?;
     // GPUI 的原始帧使用 BGRA；与壁纸解码走同一通道转换。
     for pixel in rgba.chunks_exact_mut(4) {

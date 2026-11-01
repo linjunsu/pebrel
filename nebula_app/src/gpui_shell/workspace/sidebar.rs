@@ -446,32 +446,8 @@ impl NebulaWorkspace {
                 .when_some(logo_image.clone(), |row, image| {
                     row.child(
                         div().w(px(TAB_LABEL_ICON_W)).flex_shrink_0().flex().items_center().justify_center().child(
-                            // 共用原图和 GPU 灰度处理；hover 只切绘制层，不重解码或改变占位。
-                            div()
-                                .relative()
-                                .size(px(TAB_LABEL_ICON_SIZE))
-                                .child(
-                                    img(image.clone())
-                                        .id(("sidebar-logo-idle", ix))
-                                        .size_full()
-                                        .object_fit(ObjectFit::Contain)
-                                        .when(!active, |icon| {
-                                            icon.grayscale(true).opacity(0.85)
-                                                .group_hover(hover_group.clone(), |style| style.invisible())
-                                        }),
-                                )
-                                .when(!active, |slot| {
-                                    slot.child(
-                                        img(image)
-                                            .id(("sidebar-logo-hover", ix))
-                                            .absolute()
-                                            .inset_0()
-                                            .size_full()
-                                            .object_fit(ObjectFit::Contain)
-                                            .invisible()
-                                            .group_hover(hover_group.clone(), |style| style.visible()),
-                                    )
-                                }),
+                            // ljs：保持 2.2 的观感，未选中的标签图标也保留原色，不做灰度。
+                            img(image).size(px(TAB_LABEL_ICON_SIZE)).object_fit(ObjectFit::Contain),
                         ),
                     )
                 })

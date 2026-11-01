@@ -5,6 +5,10 @@ use std::borrow::Cow;
 use gpui::{App, Font, FontFallbacks, Global, font};
 use gpui_component::ActiveTheme as _;
 
+// ljs：Windows 沿用 2.2 的界面字体（微软雅黑 UI），其他平台保持上游的 Geist。
+#[cfg(windows)]
+pub(super) const UI_FONT_FAMILY: &str = "Microsoft YaHei UI";
+#[cfg(not(windows))]
 pub(super) const UI_FONT_FAMILY: &str = "Geist";
 const UI_FONT_BYTES: &[u8] = include_bytes!("../../../assets/fonts/GeistVF.ttf");
 
