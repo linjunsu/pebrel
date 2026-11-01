@@ -91,7 +91,15 @@ impl NebulaWorkspace {
                         Some(WorkspaceTab::Terminal { focused, .. }) if *focused == pane_id
                     )
                 {
-                    crate::taskbar::apply(windowing::native_hwnd(window).unwrap_or(0), *progress);
+                    // ljs：不在任务栏按钮上放「忙碌」来回跑的动画（2.3 起 Claude 经
+                    // OSC 7501 一干活就会触发）；明确的百分比、暂停、出错照常显示。
+                    let progress = match *progress {
+                        crate::taskbar::TaskProgress::Indeterminate => {
+                            crate::taskbar::TaskProgress::None
+                        },
+                        other => other,
+                    };
+                    crate::taskbar::apply(windowing::native_hwnd(window).unwrap_or(0), progress);
                 }
                 // 后台 pane 也要刷新自己的 tab badge；一次协议事件只触发一次
                 // workspace render，只有 Running 状态会在 render 后续接共享时钟。
