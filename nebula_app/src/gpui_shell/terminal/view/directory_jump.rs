@@ -92,7 +92,8 @@ impl TerminalView {
                 ),
                 None,
             ),
-            crate::session::LaunchSession::Ssh { .. } => None,
+            crate::session::LaunchSession::Ssh { .. }
+            | crate::session::LaunchSession::Serial { .. } => None,
         }
     }
 

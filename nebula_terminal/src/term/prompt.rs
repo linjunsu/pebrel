@@ -56,7 +56,7 @@ impl<T> Term<T> {
         if !self.nebula_prompt_active() {
             return None;
         }
-        let abs = *self.nebula_prompt_marks.back()?;
+        let abs = *self.reading.prompt_marks.back()?;
         let relative =
             abs as i64 - self.grid.scrolled_out() as i64 - self.grid.history_size() as i64;
         let line = Line(i32::try_from(relative).ok()?);
