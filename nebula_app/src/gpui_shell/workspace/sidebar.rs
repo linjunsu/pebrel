@@ -199,8 +199,9 @@ impl NebulaWorkspace {
         let tab_reveal = settings
             .map(|settings| settings.tab_reveal)
             .unwrap_or(nebula_settings::TabRevealName::Slide);
-        let chrome_family = theme.font_family.clone();
-        let metadata_family = theme.mono_font_family.clone();
+        // ljs：Windows 侧栏沿用 2.2 的 Maple 等宽字体（标签名与元数据同一套）。
+        let chrome_family = sidebar_family(theme.font_family.clone());
+        let metadata_family = sidebar_family(theme.mono_font_family.clone());
         let symbol_family: SharedString = crate::font_install::SYMBOL_FONT_FAMILY.into();
         // 界面字号独立于终端缩放。
         let label_px = settings.map(|settings| settings.ui_font_size_px).unwrap_or(15.0);
@@ -976,7 +977,7 @@ impl NebulaWorkspace {
         let (ink, dim) = (theme.foreground, theme.muted_foreground);
         let dark = theme.is_dark();
         let settings = cx.try_global::<crate::gpui_shell::config::Settings>();
-        let chrome_family = theme.font_family.clone();
+        let chrome_family = sidebar_family(theme.font_family.clone());
         let symbol_family: SharedString = crate::font_install::SYMBOL_FONT_FAMILY.into();
         let label_px = settings.map(|settings| settings.ui_font_size_px).unwrap_or(15.0);
         let TabPresentation {
@@ -1038,6 +1039,11 @@ impl NebulaWorkspace {
                 }),
         )
     }
+}
+
+/// ljs：Windows 上侧栏文字固定用 Maple 等宽字体（2.2 的观感）；其他平台沿用主题字体。
+fn sidebar_family(theme_family: SharedString) -> SharedString {
+    if cfg!(windows) { crate::font_install::REQUIRED_FONT_FAMILY.into() } else { theme_family }
 }
 
 #[cfg(test)]
